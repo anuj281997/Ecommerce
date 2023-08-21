@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %} Home {% endblock title %}
+
+{% block banner-slider %}
+<div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <img src="{% static "app/image/ab1.jpg" %}" class="d-block w-100" alt="Banner-1">
+      </div>
+      
+        <div class="carousel-item ">
+            <img src="{% static "app/image/ab2.jpg" %}" class="d-block w-100" alt="Banner-2">
+        </div>
+    
+        <div class="carousel-item">
+            <img src="{% static "app/image/ab3.jpg" %}" class="d-block w-100" alt="Banner-3">
+        </div>
+    </div>
+</div>
+{% endblock banner-slider %}
+
+{% block information %}
+    <div class="container">
+        <div class="row bg-primary text-center p-5 text-white border-bottom shadow">
+            <h1>Welcome To AJ-Shop</h1>
+            <small class="fs-5"> Lorem ipsum dolor sit amet consectetur adipisicing elit. 
+                Itaque quidem autem cupiditate, saepe quo aperiam. 
+                Facere itaque amet dolores, aliquam,
+                 voluptatum dolore vel possimus velit ipsam odit id quasi repellendus. </small>
+        </div>
+    </div>
+
+{% endblock information %}
+
+{% block main_content %}
+<div class="row text-center p-5 border-bottom shadow">
+    <h2 >Products</h2>
+</div>
+    <br><br>
+    
+    <div class="container">
+        {% for product in Products %}
+            <div class="card col-lg-3">
+                <div class="product-image">
+                    <center> <a href="{%url 'ViewDetails' product.id %}">  <img src="{{product.image.url}}" class="img-responsive" 
+                        style="width:200px;height:200px;" alt=""></a></center>
+                </div>
+                <div class="product-info">
+                    <h4>{{product.pname}}</h4>
+                    <h4>{{product.price}}</h4>
+                </div>
+                <div class="btn">
+                    <a href="{%url 'ViewDetails' product.id %}"> 
+                    <button type="button">Add to Cart</button>
+                    </a>
+                </div>
+            </div>
+            {%endfor%}
+    
+        
+
+    
+</div>
+{% endblock main_content %}

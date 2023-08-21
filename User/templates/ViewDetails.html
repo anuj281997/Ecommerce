@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %} Product Page {% endblock title %}
+
+{% block main_content %}
+
+    <div class="container">
+        <div class="row flex justify-content-between ">
+            <div class="img2 col-lg-5 mt-5">
+                <img src="{{Products.image.url}}" class="image col-xs-6
+                col-sm-12 col-lg-12 mt-3 text-sm-center w-100 h-75" alt="">
+            </div>
+            <div class="productdeatil col-lg-5">
+                <h1 style="font-family: Georgia; font-size: 50px;">
+                    {{Products.pname}}</h1>
+                    <h5>Rs.{{Products.price}} </h5>
+                    <br><br>
+                    <h4>Product Description</h4>
+                    <ul class="fs-5" style="font-family: Rajdhani;">
+                    <li>{{Products.description}} </li>
+                    </ul>
+
+                    <form action="/add-to-cart" class="d-inline">
+                    <input type="hidden" name="prod_id" value="{{Products.id}}">
+                        <button type="submit" class="btn btn-warning shadow px-5 py-2">Add To Cart</button>
+                    </form>
+                    <a href="{% url 'show-cart' %}" class="btn btn-primary shadow px-5 py-2 ms-4">Buy Now</a>
+                    {% if wishlist %}
+                    <a pid={{Products.id}} class="minus-wishlist btn btn-danger shadow px-5 py-2 ms-4"><i class="fas fa-heart fa-lg"></i></a>
+                    {% else %}
+                    <a pid={{Products.id}} class="plus-wishlist btn btn-primary shadow px-5 py-2 ms-4"><i class="fas fa-heart fa-lg"></i></a>
+                    {% endif %}
+                         
+            </div>
+        </div>
+    </div>
+
+{% endblock main_content %}

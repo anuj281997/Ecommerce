@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AJ-Shop | {% block title %}{% endblock title %} </title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+    rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    
+    <link rel="stylesheet" href="{% static "app/css/owl.carousel.min.css" %}"/>
+     <link rel="stylesheet" href="{% static "app/css/all.min.css" %}"/>
+     <link rel="stylesheet" href="{% static "app/css/style.css" %}"/>
+     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+     
+     
+
+</head>
+<body>
+
+
+
+
+    <nav class="navbar navbar-expand-md navbar-dark bg-primary">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="/">
+            <img src="{% static "app/image/logo7.png" %}" width="80px" height="50px"/>
+          </a>
+          <form class="d-flex mr-auto " role="search" action="search/">
+            <input class="form-control me-2" type="search" placeholder="Search" name="search" aria-label="Search">
+            <button class="btn btn-outline-dark" type="submit">Search</button>
+          </form>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/">Home</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Products
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  {%for cat in cats%}
+                  <li><a class="dropdown-item" href="/ShowPdt/{{cat.id}}">{{cat.category_name}}</a></li>
+                  {%endfor%}
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-white" href="#">About Us</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-white" href="#">Contact Us</a>
+              </li>
+              
+            
+          
+            
+              {% if request.user.is_authenticated %}
+                
+                <li class="nav-item dropdown mx-2">
+                <a class="nav-link dropdown-toggle text-white" href="#" 
+                id="ProfileDropdown" role="button" data-bs-toggle="dropdown" 
+                aria-expanded="false">{{request.user.username}} </a>
+                <ul class="dropdown-menu" aria-labelledby="ProfileDropdown">
+                    <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+                    <li><a class="dropdown-item" href="{% url 'orders' %}">Order</a></li>
+                    <li><a class="dropdown-item" href="{% url 'passwordchnage' %}">Change Password</li>
+                    <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+                </li>
+                <li class="nav-item mx-2">
+                  <a class="nav-link text-white" href="{% url 'show-cart' %}"><span class="badge bg-danger">{% if totalitem > 0 %}
+                    {{totalitem}} {% endif %} </span> Cart</a>
+                </li>
+                <li class="nav-item mx-2">
+                  <a class="nav-link text-white" href="{% url 'wishlist' %}"> <span class="badge bg-danger"> {% if wishitem > 0 %} {{wishitem}} {% endif %} </span> <i class="fa fa-heart"></i> </a>
+                </li>
+              {% else %}
+                <li class="nav-item mx-2">
+                  <a class="nav-link text-white" href= "{% url 'login' %}" >Login</a>
+                </li>
+                <li class="nav-item mx-2">
+                  <a class="nav-link text-white" href="{% url 'signup' %}">Sign Up</a>
+                </li>
+              {% endif %}
+
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      {% block banner-slider %} {% endblock banner-slider %}
+      {% block information %}{% endblock information %}
+      {% block main_content %}{% endblock main_content %}
+      {% block payment-gateway %} 
+      <script>
+        
+'''<script src="https://checkout.razorpay.com/v1/checkout.js"></script>'''
+<script>
+var options = {
+    "key": "rzp_test_qu6zzVCmKYQPhL", // Enter the Key ID generated from the Dashboard
+    "amount": "{{razoramount}}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "currency": "INR",
+    "name": "Anuj Shukla",
+    "description": "Purchase Product",
+    "image": "https://example.com/your_logo",
+    "order_id": "{{order_id}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    "handler": function (response){
+      console.log("success")
+        var form = document.getElementById("myform");
+        //alert(form.elements["custid"].value);
+       // alert(response.razorpay_payment_id);
+       // alert(response.razorpay_order_id);
+       // alert(response.razorpay_signature)
+        window.location.href = `http://localhost:8000/paymentdone?order_id=${response.razorpay_order_id}&payment_id=${response.razorpay_payment_id}&cust_id=${form.elements["custid"].value}`
+    },
+    
+    "theme": {
+        "color": "#3399cc"
+    }
+};
+var rzp1 = new Razorpay(options);
+rzp1.on('payment.failed', function (response){
+        //alert(response.error.code);
+        //alert(response.error.source);
+        //alert(response.error.step);
+        alert(response.error.description);
+        //alert(response.error.reason);
+        //alert(response.error.metadata.order_id);
+        //alert(response.error.metadata.payment_id);
+        //DeZn2ItfmTwNnMe6xN1ZWme9
+});
+document.getElementById('rzp-button1').onclick = function(e){
+    rzp1.open();
+    e.preventDefault();
+}
+</script>
+      </script>
+      {% endblock payment-gateway %}
+
+      <footer class="container-fluid fixed-bottom bg-primary text-center p-2 mt-5">
+        Copyright:2023 || Developed By : Anuj Shukla
+      </footer>
+    
+
+  <!--  <script script="{% static "app/js/owl.carousel.min.js" %}"/></script>
+    <script script="{% static "app/js/all.min.js" %}"/></script>
+    <script script="{% static "app/js/myscript.js" %}"/></script>-->
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" 
+    integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" 
+    integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+    <script src="{% static "app/js/owl.carousel.min.js" %}"/></script>
+    <script src="{% static "app/js/all.min.js" %}"/></script>
+    <script src="{% static "app/js/myscript.js" %}"/></script>
+    
+    
+
+</body>
+</html>
